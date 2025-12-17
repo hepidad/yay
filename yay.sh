@@ -1,13 +1,22 @@
 #!/bin/bash
 
 # yay - YouTube search, playback, download, history, and more
+# Version: 0.2.0
+
+# Determine installation location
+_YAY_SOURCE="${BASH_SOURCE[0]:-${(%):-%x}}"
+# Fallback if detection fails (e.g. some shell contexts)
+if [[ -z "$_YAY_SOURCE" ]]; then _YAY_SOURCE="$0"; fi
+_YAY_HOME="$( cd "$( dirname "$_YAY_SOURCE" )" && pwd )"
 
 yay() {
+  local VERSION="0.2.0"
   local audio_only=false
   local times=-1
   local log_enabled=true
   local from_history=false
   local download_only=false
+  local search_limit=30
   local query=()
   local history_filter=""
 
@@ -39,6 +48,18 @@ yay() {
       -d)
         download_only=true
         shift
+        ;;
+      -r)
+        search_limit="$2"
+        shift 2
+        ;;
+      -v|--version)
+        echo "yay version $VERSION"
+        return 0
+        ;;
+      --location)
+        echo "$_YAY_HOME"
+        return 0
         ;;
       *)
         query+=("$1")
@@ -105,7 +126,7 @@ yay() {
   fi
 
   while [[ $times -lt 0 || $count -lt $times ]]; do
-    urls=$(yt-dlp "ytsearch10:$search" --print "%(title).100s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
+    urls=$(yt-dlp "ytsearch${search_limit}:$search" --print "%(title).100s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
     chosen=$(echo "$urls" | fzf --prompt="🎬 Pick a video (or Esc to auto-play top): " || echo "$urls" | head -n 1)
     url=$(echo "$chosen" | awk -F' | ' '{print $NF}')
     title=$(echo "$chosen" | awk -F' | ' '{print $1}')
@@ -145,3 +166,9 @@ yay() {
     echo "🚫 Logging disabled."
   fi
 }
+yay "$@"
+
+# Execute if not sourced
+if ! (return 0 2>/dev/null); then
+    yay "$@"
+fi

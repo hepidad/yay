@@ -1,4 +1,5 @@
 # yay
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
 > **Yet another interactive YouTube search + playback from your terminal. **
 > Powered by `yt-dlp`, `fzf`, and `mpv`.
 
@@ -9,7 +10,7 @@ Search YouTube, pick videos with arrow keys, play in your terminal — audio or 
 ## ✨ Features
 
 - 🔍 Search YouTube directly from the terminal
-- 🎬 Browse top 10 results
+- 🎬 Browse top 30 results (default, configurable)
 - ⏯️ Play video or audio-only
 - 🔁 Repeat selection N times (or infinitely)
 - ⌨️ Keyboard-based selection (no mouse needed)
@@ -46,13 +47,29 @@ echo 'source /full/path/to/yay/yay.sh' >> ~/.bash_profile
 source ~/.bash_profile
 ```
 
-## 🚀 Usage
+### Option 2: Install as a system command (supports `whereis`)
+If you prefer `yay` to be a standalone command (and discoverable by `whereis`), you can symlink it to your PATH:
+
+```bash
+chmod +x yay.sh
+sudo ln -s "$(pwd)/yay.sh" /usr/local/bin/yay
+```
+
+## 🔄 Update
+To update to the latest version:
+```bash
+cd /path/to/yay
+git pull
+source yay.sh
+```
+
+## � Usage
 1. Basic video search
 ```bash
 yay nature sound
 ```
 
-- Shows top 10 YouTube results for “nature sound”
+- Shows top 30 YouTube results for “nature sound”
 - Press arrow keys to select a result, or Esc to play the top result.
 - Loops forever until you quit (Ctrl+C)
 - Enable logging/history.
@@ -75,6 +92,21 @@ yay -a -n 3 nature sound
 5. By default, logging is enabled. To pause logging:
 ```bash
 yay -l nature sound
+```
+
+6. Specify number of search results (default is 30)
+```bash
+yay -r 10 nature sound
+```
+
+7. Check version
+```bash
+yay --version
+```
+
+8. Check installation location
+```bash
+yay --location
 ```
 
 ## Other Tips!
