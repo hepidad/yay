@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # yay - YouTube search, playback, download, history, and more
-# Version: 0.2.0
+# Version: 0.2.1
 
 # Determine installation location
 _YAY_SOURCE="${BASH_SOURCE[0]:-${(%):-%x}}"
@@ -10,7 +10,7 @@ if [[ -z "$_YAY_SOURCE" ]]; then _YAY_SOURCE="$0"; fi
 _YAY_HOME="$( cd "$( dirname "$_YAY_SOURCE" )" && pwd )"
 
 yay() {
-  local VERSION="0.2.0"
+  local VERSION="0.2.1"
   local audio_only=false
   local times=-1
   local log_enabled=true
@@ -61,6 +61,17 @@ yay() {
         echo "$_YAY_HOME"
         return 0
         ;;
+      --update)
+        echo "⬇️ Checking for updates..."
+        cd "$_YAY_HOME" || return 1
+        if git pull; then
+            echo "✅ Updated successfully."
+            echo "⚠️ If you are using 'yay' as a shell function, please run: source $_YAY_SOURCE"
+        else
+            echo "❌ Update failed."
+        fi
+        return 0
+        ;;
       *)
         query+=("$1")
         shift
@@ -106,7 +117,7 @@ yay() {
     else
       echo "🔁 Replaying: $url"
       if $audio_only; then
-        mpv --no-video "$url"
+        mpv --no-video --term-osd-bar "$url"
       else
         mpv "$url"
       fi
@@ -126,7 +137,7 @@ yay() {
   fi
 
   while [[ $times -lt 0 || $count -lt $times ]]; do
-    urls=$(yt-dlp "ytsearch${search_limit}:$search" --print "%(title).100s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
+    urls=$(yt-dlp "ytsearch${search_limit}:$search" --print "%(title).50s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
     chosen=$(echo "$urls" | fzf --prompt="🎬 Pick a video (or Esc to auto-play top): " || echo "$urls" | head -n 1)
     url=$(echo "$chosen" | awk -F' | ' '{print $NF}')
     title=$(echo "$chosen" | awk -F' | ' '{print $1}')
@@ -150,7 +161,7 @@ yay() {
       fi
     else
       if $audio_only; then
-        mpv --no-video "$url"
+        mpv --no-video --term-osd-bar "$url"
       else
         mpv "$url"
       fi
@@ -166,7 +177,6 @@ yay() {
     echo "🚫 Logging disabled."
   fi
 }
-yay "$@"
 
 # Execute if not sourced
 if ! (return 0 2>/dev/null); then

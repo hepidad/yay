@@ -1,5 +1,5 @@
 # yay
-![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![Version](https://img.shields.io/badge/version-0.2.1-blue)
 > **Yet another interactive YouTube search + playback from your terminal. **
 > Powered by `yt-dlp`, `fzf`, and `mpv`.
 
@@ -63,7 +63,9 @@ git pull
 source yay.sh
 ```
 
-## � Usage
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for version history.
+
+## 🚀 Usage
 1. Basic video search
 ```bash
 yay nature sound
@@ -107,6 +109,11 @@ yay --version
 8. Check installation location
 ```bash
 yay --location
+```
+
+9. Self-update
+```bash
+yay --update
 ```
 
 ## Other Tips!
