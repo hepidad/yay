@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # yay - YouTube search, playback, download, history, and more
-# Version: 0.2.1
+# Version: 0.2.2
 
 # Determine installation location
 _YAY_SOURCE="${BASH_SOURCE[0]:-${(%):-%x}}"
@@ -10,7 +10,7 @@ if [[ -z "$_YAY_SOURCE" ]]; then _YAY_SOURCE="$0"; fi
 _YAY_HOME="$( cd "$( dirname "$_YAY_SOURCE" )" && pwd )"
 
 yay() {
-  local VERSION="0.2.1"
+  local VERSION="0.2.2"
   local audio_only=false
   local times=-1
   local log_enabled=true
@@ -101,6 +101,7 @@ yay() {
     local chosen url
     chosen=$(echo "$filtered" | tac | fzf --prompt="📜 Select from history: ")
     url=$(echo "$chosen" | awk -F' | ' '{print $NF}')
+    local title=$(echo "$chosen" | awk -F' | ' '{print $1}')
 
     if [[ -z "$url" ]]; then
       echo "❌ No video selected."
@@ -117,9 +118,9 @@ yay() {
     else
       echo "🔁 Replaying: $url"
       if $audio_only; then
-        mpv --no-video --term-osd-bar "$url"
+        yt-dlp --quiet -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
       else
-        mpv "$url"
+        yt-dlp --quiet -o - "$url" | mpv --title="$title" -
       fi
     fi
 
@@ -161,9 +162,9 @@ yay() {
       fi
     else
       if $audio_only; then
-        mpv --no-video --term-osd-bar "$url"
+        yt-dlp --quiet -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
       else
-        mpv "$url"
+        yt-dlp --quiet -o - "$url" | mpv --title="$title" -
       fi
     fi
 

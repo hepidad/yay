@@ -31,9 +31,11 @@ brew install yt-dlp fzf mpv
 1. Clone the repo
 ```bash
 git clone https://github.com/hepidad/yay.git
+```
+Then, enter to the directory
+```bash
 cd yay
 ```
-
 2. Load the function in your shell
 For Zsh:
 ```bash

@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.2.2 (2026-02-13)
+
+### 🐛 Bug Fixes
+- **Playback Fix**: Resolved `HTTP 403 Forbidden` errors by switching to `yt-dlp` stdout piping to `mpv`. This bypasses YouTube's recent blocking of direct playback URLs.
+
+### ✨ Improvements
+- **Better UX**: Added video title support to `mpv` player, so the window title now displays the actual video name instead of a generic input name.
+- **History Replay**: Updated history replay to correctly parse and pass titles to the player.
+
 ## v0.2.1 (2026-01-01)
 
 ### ✨ Improvements
