@@ -111,16 +111,16 @@ yay() {
     if $download_only; then
       echo "⬇️ Downloading from history..."
       if $audio_only; then
-        yt-dlp -x --audio-format mp3 "$url"
+        yt-dlp --no-warnings -x --audio-format mp3 "$url"
       else
-        yt-dlp "$url"
+        yt-dlp --no-warnings "$url"
       fi
     else
       echo "🔁 Replaying: $url"
       if $audio_only; then
-        yt-dlp --quiet -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
+        yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
       else
-        yt-dlp --quiet -o - "$url" | mpv --title="$title" -
+        yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" -
       fi
     fi
 
@@ -138,7 +138,7 @@ yay() {
   fi
 
   while [[ $times -lt 0 || $count -lt $times ]]; do
-    urls=$(yt-dlp "ytsearch${search_limit}:$search" --print "%(title).50s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
+    urls=$(yt-dlp --no-warnings "ytsearch${search_limit}:$search" --print "%(title).50s (%(duration_string)s) - %(uploader)s | %(webpage_url)s")
     chosen=$(echo "$urls" | fzf --prompt="🎬 Pick a video (or Esc to auto-play top): " || echo "$urls" | head -n 1)
     url=$(echo "$chosen" | awk -F' | ' '{print $NF}')
     title=$(echo "$chosen" | awk -F' | ' '{print $1}')
@@ -156,15 +156,15 @@ yay() {
     if $download_only; then
       echo "⬇️ Downloading: $title"
       if $audio_only; then
-        yt-dlp -x --audio-format mp3 "$url"
+        yt-dlp --no-warnings -x --audio-format mp3 "$url"
       else
-        yt-dlp "$url"
+        yt-dlp --no-warnings "$url"
       fi
     else
       if $audio_only; then
-        yt-dlp --quiet -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
+        yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
       else
-        yt-dlp --quiet -o - "$url" | mpv --title="$title" -
+        yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" -
       fi
     fi
 
