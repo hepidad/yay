@@ -1,5 +1,29 @@
 # Release Notes
 
+## v0.2.3 (2026-07-25)
+
+### 🐛 Bug Fixes
+- **`--update` cd bug**: Self-update no longer changes the user's working directory. The `git pull` now runs in a subshell.
+- **Esc fallback in fzf**: Pressing Esc now correctly auto-plays the top result instead of exiting with nothing.
+- **Ctrl+C now exits properly**: Ctrl+C in the fzf playlist screen exits immediately back to terminal. Ctrl+C during playback kills mpv and breaks out of the loop instead of looping back to the playlist.
+- **History parsing**: Switched from ` | ` to tab delimiter to avoid conflicts with `|` in video titles.
+- **`-n` validation**: The `-n` flag now rejects non-numeric input instead of silently breaking.
+
+### ✨ Improvements
+- **Dependency check**: `yay` now checks for `yt-dlp`, `fzf`, and `mpv` at startup and shows a clear error if any are missing.
+- **Empty search handling**: Shows a clear error when `yt-dlp` returns no results instead of opening an empty fzf list.
+- **`--help` flag**: Added a built-in usage summary with all options and examples.
+- **History deduplication**: History replay now shows only the latest occurrence of each video.
+- **Cached search results**: Search results are fetched once and reused across loop iterations instead of re-querying YouTube every cycle.
+- **Download destination**: Downloads now print the output directory (`📂 Saving to: ...`).
+
+### 🔧 Internal
+- **Single version source**: Version is now defined once as `_YAY_VERSION` at the top level.
+- **Helper functions**: Extracted `_yay_play` and `_yay_download` to eliminate duplicated playback/download logic.
+- **History migration**: Old history files using ` | ` as delimiter are automatically migrated to tab-delimited format on first run.
+
+---
+
 ## v0.2.2 (2026-02-13)
 
 ### 🐛 Bug Fixes

@@ -1,5 +1,5 @@
 # yay
-![Version](https://img.shields.io/badge/version-0.2.1-blue)
+![Version](https://img.shields.io/badge/version-0.2.3-blue)
 > **Yet another interactive YouTube search + playback from your terminal. **
 > Powered by `yt-dlp`, `fzf`, and `mpv`.
 
@@ -117,6 +117,16 @@ yay --location
 ```bash
 yay --update
 ```
+
+## ⌨️ Controls
+
+**In the fzf playlist screen:**
+- **Esc** → auto-plays the top result (same as before)
+- **Ctrl+C** → exits immediately back to terminal
+
+**During playback:**
+- **q** → quits mpv, loops back to the playlist (pick another video)
+- **Ctrl+C** → kills mpv and exits back to terminal
 
 ## Other Tips!
 yay using the power of yt-dlp this mean you can:
