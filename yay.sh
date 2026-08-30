@@ -8,19 +8,30 @@ if [[ -z "$_YAY_SOURCE" ]]; then _YAY_SOURCE="$0"; fi
 _YAY_HOME="$( cd "$( dirname "$_YAY_SOURCE" )" && pwd )"
 
 # Fix #11: Single source of truth for version
-_YAY_VERSION="0.2.3"
+_YAY_VERSION="0.2.4"
 
 # Fix #12: Extract playback logic into helper function
 _yay_play() {
   local url="$1" title="$2" audio_only="$3"
-  local rc
+  local ytdlp_rc mpv_rc
   if $audio_only; then
     yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" --no-video --term-osd-bar -
   else
     yt-dlp --quiet --no-warnings -o - "$url" | mpv --title="$title" -
   fi
-  rc=${PIPESTATUS[1]:-$?}
-  return $rc
+  ytdlp_rc=${PIPESTATUS[0]}
+  mpv_rc=${PIPESTATUS[1]:-$?}
+
+  # If yt-dlp exited with a genuine error (not SIGPIPE 141 from quitting mpv early),
+  # it's most likely a YouTube extraction failure such as HTTP 403 Forbidden.
+  # These break when yt-dlp is outdated — remind the user to update it.
+  if [[ $ytdlp_rc -ne 0 && $ytdlp_rc -ne 141 ]]; then
+    echo "⚠️ yt-dlp couldn't fetch this video (possible YouTube block / HTTP 403)."
+    echo "   YouTube changes often break older yt-dlp versions. Try updating it:"
+    echo "     brew upgrade yt-dlp"
+  fi
+
+  return $mpv_rc
 }
 
 _yay_download() {

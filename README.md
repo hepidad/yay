@@ -1,5 +1,5 @@
 # yay
-![Version](https://img.shields.io/badge/version-0.2.3-blue)
+![Version](https://img.shields.io/badge/version-0.2.4-blue)
 > **Yet another interactive YouTube search + playback from your terminal. **
 > Powered by `yt-dlp`, `fzf`, and `mpv`.
 

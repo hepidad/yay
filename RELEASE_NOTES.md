@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.2.4 (2026-08-30)
+
+### ✨ Improvements
+- **yt-dlp update hint on playback failure**: When `yt-dlp` fails to fetch a stream due to a genuine extraction error (e.g. `HTTP 403 Forbidden`), `yay` now prints a clear hint to run `brew upgrade yt-dlp`. Normal early quits (pressing `q` in mpv, which sends SIGPIPE to `yt-dlp`) are excluded so the hint only fires on real failures.
+
 ## v0.2.3 (2026-07-25)
 
 ### 🐛 Bug Fixes
