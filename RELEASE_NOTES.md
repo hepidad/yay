@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.2.5 (2026-10-24)
+
+### 🐛 Bug Fixes
+- **"No video selected" on Linux (e.g. Fedora)**: The search result template passed a literal `\t` to `yt-dlp --print`, but `yt-dlp` does not interpret escape sequences in `--print` templates — it emitted the two characters `\t` instead of a real tab. This broke the title/URL split, leaving the URL empty and triggering a bogus "No video selected" error. The template now injects a real tab via `$'\t'`.
+- **Non-portable selection parsing**: Replaced the fragile `awk -F' \| '` round-trip (which behaved differently between BSD awk on macOS and gawk on Linux) with direct tab parsing through `fzf`, mirroring the history-replay path. Fixes playback selection on both awk variants.
+
 ## v0.2.4 (2026-08-30)
 
 ### ✨ Improvements

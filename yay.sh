@@ -8,7 +8,7 @@ if [[ -z "$_YAY_SOURCE" ]]; then _YAY_SOURCE="$0"; fi
 _YAY_HOME="$( cd "$( dirname "$_YAY_SOURCE" )" && pwd )"
 
 # Fix #11: Single source of truth for version
-_YAY_VERSION="0.2.4"
+_YAY_VERSION="0.2.5"
 
 # Fix #12: Extract playback logic into helper function
 _yay_play() {
@@ -221,7 +221,12 @@ EOF
   fi
 
   # Fix #9: Fetch search results once, outside the loop
-  urls=$(yt-dlp --no-warnings "ytsearch${search_limit}:$search" --print "%(title).50s (%(duration_string)s) - %(uploader)s\t%(webpage_url)s")
+  # Fix #13: Use a real tab (via $'\t') as the field separator. yt-dlp does NOT
+  # interpret "\t" in --print templates, so the literal backslash-t broke the
+  # title/url split on systems where it surfaced (e.g. Fedora), yielding an
+  # empty url and a bogus "No video selected" error.
+  local TAB=$'\t'
+  urls=$(yt-dlp --no-warnings "ytsearch${search_limit}:$search" --print "%(title).50s (%(duration_string)s) - %(uploader)s${TAB}%(webpage_url)s")
 
   # Fix #6: Handle empty search results
   if [[ -z "$urls" ]]; then
@@ -231,7 +236,10 @@ EOF
 
   while [[ $times -lt 0 || $count -lt $times ]]; do
     # fzf exit codes: 0=selected, 1=no match, 130=Ctrl+C, other=Esc
-    chosen=$(echo "$urls" | awk -F'\t' '{print $1 " | " $2}' | fzf --prompt="🎬 Pick a video (Esc=play top, Ctrl+C=quit): ")
+    # Fix #13: Keep lines tab-delimited (title<TAB>url) through fzf and parse by
+    # the real tab, mirroring the history path. This avoids the fragile and
+    # non-portable " | " round-trip (BSD awk vs gawk) that could drop the url.
+    chosen=$(printf '%s\n' "$urls" | fzf --prompt="🎬 Pick a video (Esc=play top, Ctrl+C=quit): ")
     local fzf_rc=$?
 
     # Ctrl+C in fzf → quit entirely
@@ -242,11 +250,11 @@ EOF
 
     # Esc in fzf (exit 1) → auto-play top result
     if [[ -z "$chosen" ]]; then
-      chosen=$(echo "$urls" | awk -F'\t' '{print $1 " | " $2}' | head -n 1)
+      chosen=$(printf '%s\n' "$urls" | head -n 1)
     fi
 
-    url=$(echo "$chosen" | awk -F' \\| ' '{print $NF}')
-    title=$(echo "$chosen" | awk -F' \\| ' '{$NF=""; sub(/ *$/, ""); print}')
+    url=$(printf '%s\n' "$chosen" | awk -F'\t' '{print $2}')
+    title=$(printf '%s\n' "$chosen" | awk -F'\t' '{print $1}')
 
     if [[ -z "$url" ]]; then
       echo "❌ No video selected. Exiting."
